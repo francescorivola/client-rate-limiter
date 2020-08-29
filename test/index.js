@@ -13,6 +13,26 @@ t.test('createLimiter should return a function', t => {
     t.end();
 });
 
+t.test('createLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
+    try {
+        createLimiter({ concurrency: 'a' });
+        t.fail('should not get here');
+    } catch(error) {
+        t.equal(error instanceof AssertionError, true);
+        t.equal(error.message, 'options.concurrency must be a positive number or Infinity');
+    }
+});
+
+t.test('createLimiter should thrown an AssertionError if concurrency options is a negative number', async t => {
+    try {
+        createLimiter({ concurrency: -1 });
+        t.fail('should not get here');
+    } catch(error) {
+        t.equal(error instanceof AssertionError, true);
+        t.equal(error.message, 'options.concurrency must be a positive number or Infinity');
+    }
+});
+
 t.test('limiter should receive a function as input parameter', async t => {
     const limiter = createLimiter();
     try {
