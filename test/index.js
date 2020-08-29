@@ -1,6 +1,6 @@
 const t = require('tap');
 const { AssertionError } = require('assert');
-const createLimiter = require('../index');
+const { createLimiter } = require('../index');
 
 t.test('lib should export a factory function', t => {
     t.type(createLimiter, 'function');

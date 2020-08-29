@@ -1,10 +1,11 @@
 {
-  "name": "project-x",
-  "version": "1.0.0",
+  "name": "limiter",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tap --watch"
+    "test": "tap --watch",
+    "test-ci": "tap --100"
   },
   "author": "francescorivola",
   "license": "MIT",
