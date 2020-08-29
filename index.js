@@ -1,2 +1,2 @@
-const createLimiter = require('./lib/limiter');
-module.exports.createLimiter = createLimiter;
+const createLimiter = require('./lib/limiter')
+module.exports.createLimiter = createLimiter

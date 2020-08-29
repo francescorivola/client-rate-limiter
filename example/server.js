@@ -1,13 +1,13 @@
 const fastify = require('fastify')({ logger: true })
-const fastifyRateLimit = require('fastify-rate-limit');
+const fastifyRateLimit = require('fastify-rate-limit')
 
 fastify.register(fastifyRateLimit, {
-    max: 5,
-    timeWindow: '10 seconds'
-});
+  max: 5,
+  timeWindow: '10 seconds'
+})
 
 fastify.post('/echo', (request) => {
-  return request.body;
+  return request.body
 })
 
 const start = async () => {
