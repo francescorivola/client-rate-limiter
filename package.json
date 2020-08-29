@@ -1,0 +1,14 @@
+{
+  "name": "project-x",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap --watch"
+  },
+  "author": "francescorivola",
+  "license": "MIT",
+  "devDependencies": {
+    "tap": "^14.10.8"
+  }
+}
