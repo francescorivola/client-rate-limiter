@@ -25,3 +25,7 @@ jobs:
     - run: npm run post-test
       env:
         CI: true
+
+    - name: Publish Code Coverage
+      if: github.ref == 'refs/heads/master'
+      uses: codecov/codecov-action@v1

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tap --watch",
     "test-ci": "tap --100",
-    "post-test": "tap --coverage-report=text-lcov | codecov",
+    "post-test": "tap --coverage-report=lcov",
     "lint": "eslint ."
   },
   "author": "francescorivola",
