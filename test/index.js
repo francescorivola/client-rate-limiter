@@ -83,7 +83,20 @@ t.test('limiter waitAndRetry should throw an AssertionError if called with a NaN
     t.fail('should not get here')
   } catch (error) {
     t.equal(error instanceof AssertionError, true)
-    t.equal(error.message, 'waitMs parameter must be a number')
+    t.equal(error.message, 'waitMs must be a positive number')
+  }
+})
+
+t.test('limiter waitAndRetry should throw an AssertionError if called with a negative number', async t => {
+  const limiter = createLimiter()
+  try {
+    await limiter(async waitAndRetry => {
+      waitAndRetry(-1)
+    })
+    t.fail('should not get here')
+  } catch (error) {
+    t.equal(error instanceof AssertionError, true)
+    t.equal(error.message, 'waitMs must be a positive number')
   }
 })
 
