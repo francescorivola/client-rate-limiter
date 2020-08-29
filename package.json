@@ -1,5 +1,5 @@
 {
-  "name": "limiter",
+  "name": "client-rate-limiter",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
