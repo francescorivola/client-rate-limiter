@@ -1,2 +1,2 @@
 const createClientRateLimiter = require('./lib/client-rate-limiter');
-module.exports.createClientRateLimiter = createClientRateLimiter;
+module.exports = createClientRateLimiter;

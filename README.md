@@ -47,7 +47,7 @@ In case the response status is 429, we call the hold function with the retry opt
 
 ```
 const fetch = require('node-fetch');
-const { createClientRateLimiter } = require('client-rate-limiter');
+const createClientRateLimiter = require('client-rate-limiter');
 
 const limiter = createClientRateLimiter({ concurrency: 1 });
 
