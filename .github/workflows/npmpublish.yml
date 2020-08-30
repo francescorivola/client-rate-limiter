@@ -1,0 +1,42 @@
+name: Node.js Package
+
+on:
+  push:
+    branch:
+      - master
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test-ci
+      - run: npm run post-test
+        env:
+            CI: true
+
+      - name: Publish Code Coverage
+        if: github.ref == 'refs/heads/master'
+        uses: codecov/codecov-action@v1
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
