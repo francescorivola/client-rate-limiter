@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const { createLimiter } = require('../index');
 
-const concurrency = 2;
+const concurrency = 1;
 const limiter = createLimiter({ concurrency });
 
 let count = 0;
@@ -34,7 +34,7 @@ function createDoRequest(count) {
   };
 }
 
-async function doRequest (waitAndRetry) {
+async function doRequest (hold) {
   const response = await fetch('http://localhost:3000/echo', {
     method: 'POST',
     body: JSON.stringify({
@@ -46,8 +46,14 @@ async function doRequest (waitAndRetry) {
   });
   if (response.status === 429) {
     const rateLimitReset = response.headers.get('x-ratelimit-reset');
-    const waitInMS = (parseInt(rateLimitReset) + 1) * 1000;
-    return waitAndRetry(waitInMS);
+    const holdMs = (parseInt(rateLimitReset) + 1) * 1000;
+    hold({ holdMs, retry: true });
+    return;
+  }
+  if (response.status === 200 && parseInt(response.headers.get('x-ratelimit-remaining')) === 0) {
+    const rateLimitReset = response.headers.get('x-ratelimit-reset');
+    const holdMs = (parseInt(rateLimitReset) + 1) * 1000;
+    hold({ holdMs, retry: false });
   }
   return await response.json();
 }
