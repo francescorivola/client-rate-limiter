@@ -5,10 +5,11 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "tap",
-    "test-ci": "tap --100",
+    "test": "tap \"test/**/*.test.js\"",
+    "test-ci": "tap \"test/**/*.test.js\" --100 && tsd",
     "post-test": "tap --coverage-report=lcov",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "tsd": "tsd"
   },
   "precommit": [
     "lint",
@@ -29,9 +30,17 @@
   "author": "francescorivola",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^14.6.2",
     "codecov": "^3.7.2",
     "eslint": "^7.7.0",
     "pre-commit": "^1.2.2",
-    "tap": "^14.10.8"
+    "tap": "^14.10.8",
+    "tsd": "^0.13.1"
+  },
+  "tsd": {
+    "directory": "test",
+    "compilerOptions": {
+      "esModuleInterop": true
+    }
   }
 }
