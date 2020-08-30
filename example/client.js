@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const { createClientRateLimiter } = require('../index');
 
-const concurrency = 1;
+const concurrency = 5;
 const limiter = createClientRateLimiter({ concurrency });
 
 let count = 0;
@@ -14,7 +14,7 @@ async function main () {
       count++;
       promises.push(createDoRequest(count)());
       if (promises.length === concurrency) {
-        await Promise.all(promises);
+        await Promise.allSettled(promises);
         promises = [];
       }
     }
