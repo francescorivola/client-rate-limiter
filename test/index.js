@@ -1,42 +1,42 @@
 const t = require('tap');
 const { AssertionError } = require('assert');
-const { createLimiter } = require('../index');
+const { createClientRateLimiter } = require('../index');
 
 t.test('lib should export a factory function', t => {
-  t.type(createLimiter, 'function');
+  t.type(createClientRateLimiter, 'function');
   t.end();
 });
 
-t.test('createLimiter should return a function', t => {
-  const limiter = createLimiter();
-  t.type(limiter, 'function');
+t.test('createClientRateclientRateLimiter should return a function', t => {
+  const clientRateLimiter = createClientRateLimiter();
+  t.type(clientRateLimiter, 'function');
   t.end();
 });
 
-t.test('createLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
+t.test('createClientRateclientRateLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
   try {
-    createLimiter({ concurrency: 'a' });
+    createClientRateLimiter({ concurrency: 'a' });
     t.fail('should not get here');
   } catch (error) {
     t.equal(error instanceof AssertionError, true);
-    t.equal(error.message, 'options.concurrency must be a positive number or Infinity');
+    t.equal(error.message, 'options.concurrency must be a number');
   }
 });
 
-t.test('createLimiter should thrown an AssertionError if concurrency options is a negative number', async t => {
+t.test('createClientRateclientRateLimiter should thrown an AssertionError if concurrency options is 0 number', async t => {
   try {
-    createLimiter({ concurrency: -1 });
+    createClientRateLimiter({ concurrency: 0 });
     t.fail('should not get here');
   } catch (error) {
     t.equal(error instanceof AssertionError, true);
-    t.equal(error.message, 'options.concurrency must be a positive number or Infinity');
+    t.equal(error.message, 'options.concurrency must be a number greater than 0');
   }
 });
 
-t.test('limiter should receive a function as input parameter', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter should receive a function as input parameter', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   try {
-    await limiter();
+    await clientRateLimiter();
     t.fail('should not get here');
   } catch (error) {
     t.equal(error instanceof AssertionError, true);
@@ -44,40 +44,40 @@ t.test('limiter should receive a function as input parameter', async t => {
   }
 });
 
-t.test('limiter should execute inner function', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter should execute inner function', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   let hasBeenCalled = false;
-  await limiter(async () => { hasBeenCalled = true; });
+  await clientRateLimiter(async () => { hasBeenCalled = true; });
   t.equal(hasBeenCalled, true);
 });
 
-t.test('limiter should serialize inner function calls when concurrency options is set to 1', async t => {
-  const limiter = createLimiter({ concurrency: 1 });
+t.test('clientRateLimiter should serialize inner function calls when concurrency options is set to 1', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 1 });
   let text = '';
   await Promise.allSettled([
-    limiter(async () => {
+    clientRateLimiter(async () => {
       await wait(2);
       text += '1';
     }),
-    limiter(async () => {
+    clientRateLimiter(async () => {
       await wait(1);
       text += '2';
     }),
-    limiter(async () => {
+    clientRateLimiter(async () => {
       await wait(2);
       text += '3';
     }),
-    limiter(async () => Promise.reject(Error('Oops, something goes wrong!'))),
-    limiter(async () => { text += '4'; }),
-    limiter(async () => { text += '5'; })
+    clientRateLimiter(async () => Promise.reject(Error('Oops, something goes wrong!'))),
+    clientRateLimiter(async () => { text += '4'; }),
+    clientRateLimiter(async () => { text += '5'; })
   ]);
   t.equal(text, '12345');
 });
 
-t.test('limiter hold function should throw an AssertionError if called without options', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter hold function should throw an AssertionError if called without options', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   try {
-    await limiter(async hold => {
+    await clientRateLimiter(async hold => {
       hold();
     });
     t.fail('should not get here');
@@ -87,10 +87,10 @@ t.test('limiter hold function should throw an AssertionError if called without o
   }
 });
 
-t.test('limiter hold function should throw an AssertionError if called with options.retry as not a boolean', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter hold function should throw an AssertionError if called with options.retry as not a boolean', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   try {
-    await limiter(async hold => {
+    await clientRateLimiter(async hold => {
       hold({ holdMs: 1, retry: 'A' });
     });
     t.fail('should not get here');
@@ -100,10 +100,10 @@ t.test('limiter hold function should throw an AssertionError if called with opti
   }
 });
 
-t.test('limiter hold function should throw an AssertionError if called with options.holdMs as NaN', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter hold function should throw an AssertionError if called with options.holdMs as NaN', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   try {
-    await limiter(async hold => {
+    await clientRateLimiter(async hold => {
       hold({ holdMs: 'A' });
     });
     t.fail('should not get here');
@@ -113,10 +113,10 @@ t.test('limiter hold function should throw an AssertionError if called with opti
   }
 });
 
-t.test('limiter hold function should throw an AssertionError if called with options.holdMs as negative number', async t => {
-  const limiter = createLimiter();
+t.test('clientRateLimiter hold function should throw an AssertionError if called with options.holdMs as negative number', async t => {
+  const clientRateLimiter = createClientRateLimiter();
   try {
-    await limiter(async hold => {
+    await clientRateLimiter(async hold => {
       hold({ holdMs: -1 });
     });
     t.fail('should not get here');
@@ -126,12 +126,12 @@ t.test('limiter hold function should throw an AssertionError if called with opti
   }
 });
 
-t.test('limiter should wait and retry inner function calls when hold function is called with retry set to true', async t => {
-  const limiter = createLimiter({ concurrency: 1 });
+t.test('clientRateLimiter should wait and retry inner function calls when hold function is called with retry set to true', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 1 });
   let text = '';
   let shouldRetry = true;
   await Promise.allSettled([
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       if (shouldRetry) {
         text += '1';
         shouldRetry = false;
@@ -140,17 +140,17 @@ t.test('limiter should wait and retry inner function calls when hold function is
         text += '2';
       }
     }),
-    limiter(async () => { text += '3'; })
+    clientRateLimiter(async () => { text += '3'; })
   ]);
   t.equal(text, '123');
 });
 
-t.test('limiter should execute hold function once', async t => {
-  const limiter = createLimiter({ concurrency: 1 });
+t.test('clientRateLimiter should execute hold function once', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 1 });
   let text = '';
   let shouldRetry = true;
   await Promise.allSettled([
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       if (shouldRetry) {
         text += '1';
         shouldRetry = false;
@@ -160,18 +160,18 @@ t.test('limiter should execute hold function once', async t => {
         text += '2';
       }
     }),
-    limiter(async () => { text += '3'; })
+    clientRateLimiter(async () => { text += '3'; })
   ]);
   t.equal(text, '123');
 });
 
-t.test('limiter should not re-hold if already holding', async t => {
-  const limiter = createLimiter({ concurrency: 2 });
+t.test('clientRateLimiter should not re-hold if already holding', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 2 });
   let text = '';
   let shouldRetry1 = true;
   let shouldRetry2 = true;
   await Promise.allSettled([
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       await wait(5);
       if (shouldRetry1) {
         text += '1';
@@ -181,7 +181,7 @@ t.test('limiter should not re-hold if already holding', async t => {
         text += '4';
       }
     }),
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       await wait(10);
       if (shouldRetry2) {
         text += '2';
@@ -195,28 +195,28 @@ t.test('limiter should not re-hold if already holding', async t => {
   t.equal(text, '1234');
 });
 
-t.test('limiter should not retry if hold function is called with retry options as undefind', async t => {
-  const limiter = createLimiter({ concurrency: 1 });
+t.test('clientRateLimiter should not retry if hold function is called with retry options as undefind', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 1 });
   let text = '';
   await Promise.allSettled([
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       text += '1';
       hold({ holdMs: 10 });
     }),
-    limiter(async () => { text += '2'; })
+    clientRateLimiter(async () => { text += '2'; })
   ]);
   t.equal(text, '12');
 });
 
-t.test('limiter should not retry if hold function is called with retry options as false', async t => {
-  const limiter = createLimiter({ concurrency: 1 });
+t.test('clientRateLimiter should not retry if hold function is called with retry options as false', async t => {
+  const clientRateLimiter = createClientRateLimiter({ concurrency: 1 });
   let text = '';
   await Promise.allSettled([
-    limiter(async (hold) => {
+    clientRateLimiter(async (hold) => {
       text += '1';
       hold({ holdMs: 10, retry: false });
     }),
-    limiter(async () => { text += '2'; })
+    clientRateLimiter(async () => { text += '2'; })
   ]);
   t.equal(text, '12');
 });

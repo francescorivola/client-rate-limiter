@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const { createLimiter } = require('../index');
+const { createClientRateLimiter } = require('../index');
 
 const concurrency = 1;
-const limiter = createLimiter({ concurrency });
+const limiter = createClientRateLimiter({ concurrency });
 
 let count = 0;
 let promises = [];
