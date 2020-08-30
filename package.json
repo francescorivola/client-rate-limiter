@@ -5,11 +5,23 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "tap --watch",
+    "test": "tap",
     "test-ci": "tap --100",
     "post-test": "tap --coverage-report=lcov",
     "lint": "eslint ."
   },
+  "precommit": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/francescorivola/client-rate-limiter.git"
+  },
+  "keywords": [
+    "429",
+    "rate limit"
+  ],
   "author": "francescorivola",
   "license": "MIT",
   "devDependencies": {
