@@ -18,6 +18,10 @@
     "type": "git",
     "url": "git+ssh://git@github.com/francescorivola/client-rate-limiter.git"
   },
+  "bugs": {
+    "url": "https://github.com/francescorivola/client-rate-limiter/issues"
+  },
+  "homepage": "https://github.com/francescorivola/client-rate-limiter#readme",
   "keywords": [
     "429",
     "rate limit"
