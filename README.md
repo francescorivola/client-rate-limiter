@@ -13,25 +13,25 @@ Simple lib to handle client http requests throttling to http apis that implement
 
 ## The Problem
 
-Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure http requests do not get lost.
+Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure no http requests get lost.
 
-i.e.: a cron application that every day syncronizes purchase orders from one system to another.
+i.e.: a cron application that every day syncronizes orders from one system to another.
 
-Some library solves this issue managing a client rate limit where you establish a time windows and a rate. This approach is valid however has the following issues:
-1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time
-2. in application that works in multiple process, the rating mechanism must keep the state in sync between processes, so databases such Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
+Some library solves this issue managing a client rate limit where you set a time window and a rate. This approach is valid however has the following issues:
+1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time.
+2. in application that works in multiple instances, the rating mechanism must keep the state in sync between them, so databases such Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
 
 ## The Solution
 
-This library takes a different approach. It takes advantage of the api http response headers returned by the server to let you limit your http requests.
+This library takes a different approach. It takes advantage of the api http response headers returned by the server to let you limit your http requests in the client.
 
 Rate limit server solutions tipically implement the following headers:
 * **X-RateLimit-Reset**: indicates when the current window ends, in seconds from the current time.
 * **X-RateLimit-Remaining**: indicates how many calls you have remaining in this window.
 
-So, with any response you can know if you are hitting the server limit or not and how much time you have until the counter got resetted.
+So, given an http response you can know if you are hitting the server limit or not and how much time you have until the counter got resetted.
 
-The library implements internally a queue and provides an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation.
+The library implements internally a queue and provides an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation/request.
 
 ## Example
 
