@@ -5,7 +5,7 @@ declare module 'client-rate-limiter' {
         export type Hold = (options: HoldOptions) => void;
         export type ClientRateLimiterFunc = (hold: Hold) => Promise<any>;
         export type ClientRateLimiter = (func: ClientRateLimiterFunc) => Promise<any>
-        export type CreateClientRateLimiter = (options?: CreateClientRateLimiterOptions) => void;
+        export type CreateClientRateLimiter = (options?: CreateClientRateLimiterOptions) => ClientRateLimiter;
     }
     const createClientRateLimiter: ClientRateLimiter.CreateClientRateLimiter;
 
