@@ -74,42 +74,68 @@ t.test('limiter should serialize inner function calls when concurrency options i
   t.equal(text, '12345');
 });
 
-t.test('limiter waitAndRetry should throw an AssertionError if called with a NaN', async t => {
+t.test('limiter hold function should throw an AssertionError if called without options', async t => {
   const limiter = createLimiter();
   try {
-    await limiter(async waitAndRetry => {
-      waitAndRetry('A');
+    await limiter(async hold => {
+      hold();
     });
     t.fail('should not get here');
   } catch (error) {
     t.equal(error instanceof AssertionError, true);
-    t.equal(error.message, 'waitMs must be a positive number');
+    t.equal(error.message, 'options object is required');
   }
 });
 
-t.test('limiter waitAndRetry should throw an AssertionError if called with a negative number', async t => {
+t.test('limiter hold function should throw an AssertionError if called with options.retry as not a boolean', async t => {
   const limiter = createLimiter();
   try {
-    await limiter(async waitAndRetry => {
-      waitAndRetry(-1);
+    await limiter(async hold => {
+      hold({ holdMs: 1, retry: 'A' });
     });
     t.fail('should not get here');
   } catch (error) {
     t.equal(error instanceof AssertionError, true);
-    t.equal(error.message, 'waitMs must be a positive number');
+    t.equal(error.message, 'options.retry must be a boolean');
   }
 });
 
-t.test('limiter should wait and retry inner function calls when waitAndRetry is called', async t => {
+t.test('limiter hold function should throw an AssertionError if called with options.holdMs as NaN', async t => {
+  const limiter = createLimiter();
+  try {
+    await limiter(async hold => {
+      hold({ holdMs: 'A' });
+    });
+    t.fail('should not get here');
+  } catch (error) {
+    t.equal(error instanceof AssertionError, true);
+    t.equal(error.message, 'options.holdMs must be a positive number');
+  }
+});
+
+t.test('limiter hold function should throw an AssertionError if called with options.holdMs as negative number', async t => {
+  const limiter = createLimiter();
+  try {
+    await limiter(async hold => {
+      hold({ holdMs: -1 });
+    });
+    t.fail('should not get here');
+  } catch (error) {
+    t.equal(error instanceof AssertionError, true);
+    t.equal(error.message, 'options.holdMs must be a positive number');
+  }
+});
+
+t.test('limiter should wait and retry inner function calls when hold function is called with retry set to true', async t => {
   const limiter = createLimiter({ concurrency: 1 });
   let text = '';
   let shouldRetry = true;
   await Promise.allSettled([
-    limiter(async (waitAndRetry) => {
+    limiter(async (hold) => {
       if (shouldRetry) {
         text += '1';
         shouldRetry = false;
-        waitAndRetry(10);
+        hold({ holdMs: 10, retry: true });
       } else {
         text += '2';
       }
@@ -119,17 +145,17 @@ t.test('limiter should wait and retry inner function calls when waitAndRetry is 
   t.equal(text, '123');
 });
 
-t.test('limiter should execute waitAndRetry once', async t => {
+t.test('limiter should execute hold function once', async t => {
   const limiter = createLimiter({ concurrency: 1 });
   let text = '';
   let shouldRetry = true;
   await Promise.allSettled([
-    limiter(async (waitAndRetry) => {
+    limiter(async (hold) => {
       if (shouldRetry) {
         text += '1';
         shouldRetry = false;
-        waitAndRetry(10);
-        waitAndRetry(10);
+        hold({ holdMs: 10, retry: true });
+        hold({ holdMs: 10, retry: true });
       } else {
         text += '2';
       }
@@ -139,34 +165,60 @@ t.test('limiter should execute waitAndRetry once', async t => {
   t.equal(text, '123');
 });
 
-t.test('limiter should not rehold if already holding', async t => {
+t.test('limiter should not re-hold if already holding', async t => {
   const limiter = createLimiter({ concurrency: 2 });
   let text = '';
   let shouldRetry1 = true;
   let shouldRetry2 = true;
   await Promise.allSettled([
-    limiter(async (waitAndRetry) => {
+    limiter(async (hold) => {
       await wait(5);
       if (shouldRetry1) {
         text += '1';
         shouldRetry1 = false;
-        waitAndRetry(10);
+        hold({ holdMs: 10, retry: true });
       } else {
         text += '4';
       }
     }),
-    limiter(async (waitAndRetry) => {
+    limiter(async (hold) => {
       await wait(10);
       if (shouldRetry2) {
         text += '2';
         shouldRetry2 = false;
-        waitAndRetry(10);
+        hold({ holdMs: 10, retry: true });
       } else {
         text += '3';
       }
     })
   ]);
   t.equal(text, '1234');
+});
+
+t.test('limiter should not retry if hold function is called with retry options as undefind', async t => {
+  const limiter = createLimiter({ concurrency: 1 });
+  let text = '';
+  await Promise.allSettled([
+    limiter(async (hold) => {
+      text += '1';
+      hold({ holdMs: 10 });
+    }),
+    limiter(async () => { text += '2'; })
+  ]);
+  t.equal(text, '12');
+});
+
+t.test('limiter should not retry if hold function is called with retry options as false', async t => {
+  const limiter = createLimiter({ concurrency: 1 });
+  let text = '';
+  await Promise.allSettled([
+    limiter(async (hold) => {
+      text += '1';
+      hold({ holdMs: 10, retry: false });
+    }),
+    limiter(async () => { text += '2'; })
+  ]);
+  t.equal(text, '12');
 });
 
 function wait (ms) {
