@@ -31,7 +31,7 @@ Rate limit server solutions tipically implement the following headers:
 
 So, with any response you can know if you are hitting the server limit or not and how much time you have until the counter got resetted.
 
-The library implements internally a queue and proivdes an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation.
+The library implements internally a queue and provides an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation.
 
 ## Example
 
