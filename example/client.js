@@ -1,17 +1,17 @@
-const fetch = require('node-fetch')
-const { createLimiter } = require('../index')
+const fetch = require('node-fetch');
+const { createLimiter } = require('../index');
 
 const concurrency = 2;
-const limiter = createLimiter({ concurrency })
+const limiter = createLimiter({ concurrency });
 
-let count = 0
+let count = 0;
 let promises = [];
 
 async function main () {
   try {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      count++
+      count++;
       promises.push(createDoRequest(count)());
       if (promises.length === concurrency) {
         await Promise.all(promises);
@@ -19,17 +19,17 @@ async function main () {
       }
     }
   } catch (error) {
-    console.error(error)
-    process.exit(1)
+    console.error(error);
+    process.exit(1);
   }
 }
 
-main()
+main();
 
 function createDoRequest(count) {
   return async () => {
-    console.log('Request', count)
-    await limiter(doRequest)
+    console.log('Request', count);
+    await limiter(doRequest);
     console.log('Request', count, 'completed');
   };
 }
@@ -43,11 +43,11 @@ async function doRequest (waitAndRetry) {
     headers: {
       'Content-Type': 'application/json'
     }
-  })
+  });
   if (response.status === 429) {
-    const rateLimitReset = response.headers.get('x-ratelimit-reset')
-    const waitInMS = (parseInt(rateLimitReset) + 1) * 1000
-    return waitAndRetry(waitInMS)
+    const rateLimitReset = response.headers.get('x-ratelimit-reset');
+    const waitInMS = (parseInt(rateLimitReset) + 1) * 1000;
+    return waitAndRetry(waitInMS);
   }
-  return await response.json()
+  return await response.json();
 }
