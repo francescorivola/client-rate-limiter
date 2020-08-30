@@ -35,7 +35,7 @@ The library implements internally a queue and provides an **hold** function to d
 
 ## Example
 
-The example below show you a client app that performs http requests to an echo server.
+The example below is a client app that performs http requests to an echo server.
 
 The client rate limiter is created with concurrency set to 1, so the lib will serialize internally all http requests.
 
