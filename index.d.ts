@@ -3,8 +3,8 @@ declare module 'client-rate-limiter' {
         export type CreateClientRateLimiterOptions = { concurrency: number };
         export type HoldOptions = { holdMs: number, retry?: boolean};
         export type Hold = (options: HoldOptions) => void;
-        export type ClientRateLimiterFunc = (hold: Hold) => Promise<any>;
-        export type ClientRateLimiter = (func: ClientRateLimiterFunc) => Promise<any>
+        export type ClientRateLimiterFunc<T> = (hold: Hold) => Promise<T>;
+        export type ClientRateLimiter<T> = (func: ClientRateLimiterFunc<T>) => Promise<T>
         export type CreateClientRateLimiter = (options?: CreateClientRateLimiterOptions) => ClientRateLimiter;
     }
     const createClientRateLimiter: ClientRateLimiter.CreateClientRateLimiter;
