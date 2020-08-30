@@ -17,9 +17,9 @@ Most http apis implement rate limit mechanisms to protect them against DoS attac
 
 i.e.: a cron application that every day syncronizes purchase orders from one system to another.
 
-Some library solve this issue managing a client rate limit where you establish a time windows and a rate. This approach is valid however has the following issues:
+Some library solves this issue managing a client rate limit where you establish a time windows and a rate. This approach is valid however has the following issues:
 1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time
-2. in application that works in multiple process, the rating mechanism must keep the state in a distributed system, so db as Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
+2. in application that works in multiple process, the rating mechanism must keep the state in sync between processes, so databases such Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
 
 ## The Solution
 
