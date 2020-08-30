@@ -1,16 +1,22 @@
 const fetch = require('node-fetch')
-const index = require('../index')
+const { createLimiter } = require('../index')
 
-const limiter = index({ concurrency: 1 })
+const concurrency = 2;
+const limiter = createLimiter({ concurrency })
 
 let count = 0
+let promises = [];
 
 async function main () {
   try {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       count++
-      console.log(await limiter(doRequest), new Date())
-      console.log('Request', count, 'completed')
+      promises.push(createDoRequest(count)());
+      if (promises.length === concurrency) {
+        await Promise.all(promises);
+        promises = [];
+      }
     }
   } catch (error) {
     console.error(error)
@@ -20,8 +26,15 @@ async function main () {
 
 main()
 
+function createDoRequest(count) {
+  return async () => {
+    console.log('Request', count)
+    await limiter(doRequest)
+    console.log('Request', count, 'completed');
+  };
+}
+
 async function doRequest (waitAndRetry) {
-  console.log('Request', count)
   const response = await fetch('http://localhost:3000/echo', {
     method: 'POST',
     body: JSON.stringify({
@@ -37,4 +50,4 @@ async function doRequest (waitAndRetry) {
     return waitAndRetry(waitInMS)
   }
   return await response.json()
-};
+}
