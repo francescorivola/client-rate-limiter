@@ -13,7 +13,7 @@ Simple lib to handle client http requests throttling to http apis that implement
 
 ## The Problem
 
-Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure http requests does not get lost.
+Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure http requests do not get lost.
 
 i.e.: a cron application that every day must syncronize purchase orders to one system to another.
 
