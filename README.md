@@ -21,15 +21,17 @@ Some library solve this issue managing a client rate limit where you establish a
 1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time
 2. in application that works in multiple process, the rating mechanism must keep the state in a distributed system, so db as Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
 
-## The Soluction
+## The Solution
 
-This library takes a different approach and take advantage of the api http response headers to let you limit your http requests.
+This library takes a different approach. It takes advantage of the api http response headers returned by the server to let you limit your http requests.
 
 Rate limit server solutions tipically implement the following headers:
 * **X-RateLimit-Reset**: indicates when the current window ends, in seconds from the current time.
 * **X-RateLimit-Remaining**: indicates how many calls you have remaining in this window.
 
-So when at any response you can know if you must set your clientRequestLimiter on hold during N milliseconds and if retry the request in case the response status is 429 Too Many Requests.
+So, with any response you can know if you are hitting the server limit or not and how much time you have until the counter got resetted.
+
+The library implements internally a queue and proivdes an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation.
 
 ## Example:
 
@@ -39,9 +41,9 @@ The client rate limiter is created with concurrency set to 1, so the lib will se
 
 The function of the limiter has a **hold** function that allow you to set the limiter in hold for a given duration in milliseconds and retry or not the operation.
 
-In the example we can see that if the response status is 200 and x-ratelimit-remaining is 0, we assume we have reached the max number of requests for server time windows. In this case we call hold function with the number of milliseconds given from the response header x-ratelimit-reset.
+In the example we can see that if the response status is 200 and x-ratelimit-remaining is 0, we assume we have reached the max number of requests for server time windows. In this case we call the hold function with the number of milliseconds given from the response header x-ratelimit-reset.
 
-In case the response status is 429, we call the hold with the retry option set to true. The library will re-enqueued the request at the tail of the queue to be processed as soon as the hold period ends.
+In case the response status is 429, we call the hold function with the retry option set to true. The library will re-enqueued the request at the tail of the queue to be processed as soon as the hold period ends.
 
 ```
 const fetch = require('node-fetch');
