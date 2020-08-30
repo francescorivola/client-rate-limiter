@@ -9,4 +9,4 @@ declare namespace ClientRateLimiter {
 
 declare const createClientRateLimiter: clientRateLimiter.createClientRateLimiter;
 
-export = createClientRateLimiter;
+export = { createClientRateLimiter };
