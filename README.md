@@ -33,9 +33,9 @@ So, with any response you can know if you are hitting the server limit or not an
 
 The library implements internally a queue and proivdes an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation.
 
-## Example:
+## Example
 
-The example below is a client app that performs http requests to an echo server.
+The example below show you a client app that performs http requests to an echo server.
 
 The client rate limiter is created with concurrency set to 1, so the lib will serialize internally all http requests.
 
