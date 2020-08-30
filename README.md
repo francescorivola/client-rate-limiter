@@ -15,7 +15,7 @@ Simple lib to handle client http requests throttling to http apis that implement
 
 Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure http requests do not get lost.
 
-i.e.: a cron application that every day must syncronize purchase orders to one system to another.
+i.e.: a cron application that every day syncronizes purchase orders from one system to another.
 
 Some library solve this issue managing a client rate limit where you establish a time windows and a rate. This approach is valid however has the following issues:
 1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time
