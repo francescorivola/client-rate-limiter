@@ -13,6 +13,12 @@ t.test('createClientRateclientRateLimiter should return a function', t => {
   t.end();
 });
 
+t.test('createClientRateclientRateLimiter should return a function when empty options object', async t => {
+  const clientRateLimiter = createClientRateLimiter({});
+  t.type(clientRateLimiter, 'function');
+  t.end();
+});
+
 t.test('createClientRateclientRateLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
   try {
     createClientRateLimiter({ concurrency: 'a' });
@@ -42,6 +48,13 @@ t.test('clientRateLimiter should receive a function as input parameter', async t
     t.equal(error instanceof AssertionError, true);
     t.equal(error.message, 'function is required');
   }
+});
+
+t.test('clientRateLimiter should allow a function that do not receive a Promise', async t => {
+  const clientRateLimiter = createClientRateLimiter();
+  const result = await clientRateLimiter(() => 1);
+  t.equal(result, 1);
+  t.end();
 });
 
 t.test('clientRateLimiter should execute inner function', async t => {
