@@ -1,5 +1,5 @@
 # client-rate-limiter
-Simple lib to handle client http throttled requests taking advance of the server rate limit response headers.
+Simple lib to handle client http throttled requests taking advantage of the server rate limit response headers.
 
 [ ![Npm Version](https://badge.fury.io/js/client-rate-limiter.svg)](https://www.npmjs.com/package/client-rate-limiter)
 [![Actions Status](https://github.com/francescorivola/client-rate-limiter/workflows/Node%20CI/badge.svg)](https://github.com/francescorivola/client-rate-limiter/actions)
@@ -9,41 +9,66 @@ Simple lib to handle client http throttled requests taking advance of the server
 
 ## Installation
 
-` npm install --save client-rate-limiter `
+```npm install --save client-rate-limiter```
 
 ## The Problem
 
 Most http apis implement rate limit mechanisms to protect them against DoS attacks. Client applications that interact with such http apis must take into account these limits to ensure no http requests get lost.
 
-i.e.: a cron application that every day syncronizes orders from one system to another.
+i.e.: a cron application that every day synchronizes orders from one system to another.
 
-Some library solves this issue managing a client rate limit where you set a time window and a rate. This approach is valid however has the following issues:
-1. rate limit tipically is hardcoded and must be updated if the rate limit of the http api change over time.
-2. in application that works in multiple instances, the rating mechanism must keep the state in sync between them, so databases such Redis are used for this job. This increases the complexity of the arquitecture required to implement this solution.
+Some library solves this issue managing a client rate limit where you specify a time window and a rate. This approach is valid however has the following issues:
+1. rate limit typically is hard-coded in the client and must be updated if the rate limit of the http api change over time.
+2. in application that works in multiple instances, the rating mechanism must keep the state in sync between them, so databases such Redis are used for this job. This increases the complexity of the architecture required to implement this solution.
 
 ## The Solution
 
 This library takes a different approach. It takes advantage of the api http response headers returned by the server to let you limit your http requests in the client.
 
-Rate limit server solutions tipically implement the following headers:
+Rate limit server solutions typically implement the following headers:
 * **X-RateLimit-Reset**: indicates when the current window ends, in seconds from the current time.
-* **X-RateLimit-Remaining**: indicates how many calls you have remaining in this window.
+* **X-RateLimit-Remaining**: indicates how many calls you have remaining in the current time window.
 
-So, given an http response you can know if you are hitting the server limit or not and how much time you have until the counter got resetted.
+So, given an http response you can know if you are hitting the server limit or not and how much time you have until the counter is reset.
 
-The library implements internally a queue and provides an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation/request.
+The library implements internally a simple FIFO queue and provides an **hold** function to determinate if the queue processing must be set in hold during a specific duration and if retry or not the operation/request.
+
+## Options
+
+### createClientRateLimiter(options)
+
+The library export a factory function that returns a new instance of the client rate limiter.
+
+The optional options argument is composed by the following properties:
+
+|Name|Type|Description|Default|
+|----|----|-----------|-------|
+|`concurrency`|number|how many operations are consumed concurrently from the client request limiter queue.|`1`|
+
+**IMPORTANT NOTE**: It is very important to set a proper value for the `concurrency` property. The value will depends mostly on your application use cases. i.e.: set concurrency to 1 in an application that performs more than 1 call simultaneously to the limiter function could potentially implies an increase in memory usage and operations enqueued in the delimiter queue.
+
+### clientRateLimit(func)
+
+The client rate limiter instance is a decorator function that wraps the function that performs the http request.
+
+The decorated function returns a promise.
+
+Note that this library is not tied to any specific http request library. Inside your decorated function you can use whatever library you want to perform the http request (request, node-fetch, native http/https node modules, etc...);
+
+### hold(options)
+
+The library executes the decorated function passing as input parameter the `hold` function that allows you to set the client rate limiter in hold for a given duration in milliseconds and retry or not the operation.
+
+The options argument is composed by the following properties:
+
+|Name|Type|Description|Default|
+|----|----|-----------|-------|
+|`holdMs`|number|how many milliseconds the client rate limiter will be set in hold and stop processing other operations from its queue. Note that, when the client rate limiter is in hold state, new operation can be added to the queue.||
+|`retry`|boolean|when set to `true` the library retries the operation adding back it at the tail of the queue to be processed as soon as the hold period ends.|`false`|
 
 ## Example
 
 The example below is a client app that performs http requests to an echo server.
-
-The client rate limiter is created with concurrency set to 1, so the lib will serialize internally all http requests.
-
-The function of the limiter has a **hold** function that allow you to set the limiter in hold for a given duration in milliseconds and retry or not the operation.
-
-In the example we can see that if the response status is 200 and x-ratelimit-remaining is 0, we assume we have reached the max number of requests for server time windows. In this case we call the hold function with the number of milliseconds given from the response header x-ratelimit-reset.
-
-In case the response status is 429, we call the hold function with the retry option set to true. The library will re-enqueued the request at the tail of the queue to be processed as soon as the hold period ends.
 
 ```
 const fetch = require('node-fetch');
@@ -86,3 +111,15 @@ async function main () {
 }
 main();
 ```
+
+The client rate limiter is created with concurrency set to 1, so the lib will serialize internally all http requests.
+
+In the example we can see that if the response status is 200 and the response header x-ratelimit-remaining is 0, we assume we have reached the max number of requests for the current server time window. In this case we call the hold function with the number of milliseconds given from the response header x-ratelimit-reset.
+
+In case the response status is 429, we call the hold function with the retry option set to true. The library will re-enqueued the request at the tail of the queue to be processed as soon as the hold period ends.
+
+The full example can be found in the repo in the [example](./example) folder.
+
+## License
+
+MIT
