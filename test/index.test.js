@@ -7,19 +7,19 @@ t.test('lib should export a factory function', t => {
   t.end();
 });
 
-t.test('createClientRateclientRateLimiter should return a function', t => {
+t.test('createClientRateLimiter should return a function', t => {
   const clientRateLimiter = createClientRateLimiter();
   t.type(clientRateLimiter, 'function');
   t.end();
 });
 
-t.test('createClientRateclientRateLimiter should return a function when empty options object', async t => {
+t.test('createClientRateLimiter should return a function when empty options object', async t => {
   const clientRateLimiter = createClientRateLimiter({});
   t.type(clientRateLimiter, 'function');
   t.end();
 });
 
-t.test('createClientRateclientRateLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
+t.test('createClientRateLimiter should thrown an AssertionError if concurrency options is NaN', async t => {
   try {
     createClientRateLimiter({ concurrency: 'a' });
     t.fail('should not get here');
@@ -29,7 +29,7 @@ t.test('createClientRateclientRateLimiter should thrown an AssertionError if con
   }
 });
 
-t.test('createClientRateclientRateLimiter should thrown an AssertionError if concurrency options is 0 number', async t => {
+t.test('createClientRateLimiter should thrown an AssertionError if concurrency options is 0 number', async t => {
   try {
     createClientRateLimiter({ concurrency: 0 });
     t.fail('should not get here');
@@ -55,6 +55,32 @@ t.test('clientRateLimiter should allow a function that do not receive a Promise'
   const result = await clientRateLimiter(() => 1);
   t.equal(result, 1);
   t.end();
+});
+
+t.only('clientRateLimiter should throw the same error if the wrapped sync function throw an error', async t => {
+  const clientRateLimiter = createClientRateLimiter();
+  try {
+    await clientRateLimiter(() => {
+      throw new Error('Oops, an error occurred');
+    });
+    t.fail('should not get here');
+  } catch (error) {
+    t.equal(error instanceof Error, true);
+    t.equal(error.message, 'Oops, an error occurred');
+  }
+});
+
+t.test('clientRateLimiter should throw the same error if the wrapped async function throw an error', async t => {
+  const clientRateLimiter = createClientRateLimiter();
+  try {
+    await clientRateLimiter(async () => {
+      throw new Error('Oops, an error occurred');
+    });
+    t.fail('should not get here');
+  } catch (error) {
+    t.equal(error instanceof Error, true);
+    t.equal(error.message, 'Oops, an error occurred');
+  }
 });
 
 t.test('clientRateLimiter should execute inner function', async t => {
