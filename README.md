@@ -51,7 +51,7 @@ The options argument is composed by the following properties:
 
 **IMPORTANT NOTE**: It is very important to set a proper value for the `concurrency` property. The value will depend mostly on your application use case. i.e.: set concurrency to 1 in an application that performs more than 1 call simultaneously to the limiter function could potentially imply an increase in memory usage and operations enqueued in the delimiter queue.
 
-### clientRateLimit(func)
+### clientRateLimiter(func)
 
 The client rate limiter instance is a decorator function that wraps the function that performs the http request.
 
