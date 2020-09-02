@@ -1,6 +1,6 @@
 {
   "name": "client-rate-limiter",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Simple lib to handle client http throttled requests taking advantage of the server rate limit response headers.",
   "main": "index.js",
   "types": "index.d.ts",
