@@ -1,5 +1,5 @@
 # client-rate-limiter
-Simple lib to handle client http requests throttling to http apis that implement rate limit.
+Simple lib to handle client http requests throttling for http apis that implement rate limit.
 
 [ ![Npm Version](https://badge.fury.io/js/client-rate-limiter.svg)](https://www.npmjs.com/package/client-rate-limiter)
 [![Actions Status](https://github.com/francescorivola/client-rate-limiter/workflows/Node%20CI/badge.svg)](https://github.com/francescorivola/client-rate-limiter/actions)
