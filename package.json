@@ -1,6 +1,6 @@
 {
   "name": "client-rate-limiter",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Simple lib to handle client http requests throttling to http apis that implement rate limit.",
   "main": "index.js",
   "types": "index.d.ts",
