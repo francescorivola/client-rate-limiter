@@ -35,7 +35,7 @@
     "eslint": "^7.7.0",
     "pre-commit": "^1.2.2",
     "tap": "^14.10.8",
-    "tsd": "^0.13.1"
+    "tsd": "^0.14.0"
   },
   "tsd": {
     "directory": "test",
