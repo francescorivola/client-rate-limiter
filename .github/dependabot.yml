@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: tap
+    versions:
+    - 15.0.3
+- package-ecosystem: npm
+  directory: "/example"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
