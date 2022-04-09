@@ -5,7 +5,7 @@ Simple lib to handle client http throttled requests taking advantage of the serv
 [![Actions Status](https://github.com/francescorivola/client-rate-limiter/workflows/Node%20CI/badge.svg)](https://github.com/francescorivola/client-rate-limiter/actions)
 [![CodeFactor](https://www.codefactor.io/repository/github/francescorivola/client-rate-limiter/badge)](https://www.codefactor.io/repository/github/francescorivola/client-rate-limiter)
 [![codecov](https://codecov.io/gh/francescorivola/client-rate-limiter/branch/master/graph/badge.svg)](https://codecov.io/gh/francescorivola/client-rate-limiter)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=francescorivola/client-rate-limiter)](https://dependabot.com)
+[![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
 
 ## Installation
 
