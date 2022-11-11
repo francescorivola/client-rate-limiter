@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "fastify": "^3.3.0",
+    "fastify": "^4.9.2",
     "fastify-rate-limit": "^5.0.0",
     "node-fetch": "^3.3.0"
   }
